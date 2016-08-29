@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>JodiUI - Components - Example</title>
+    </head>
+    <body>
+        <div id="app"></div>
+        <div>Type <i>incrementCounter</i> in dev-tools console.</div>
+
+        <script src="node_modules/systemjs/dist/system.js"></script>
+        <script src="systemjs.config.js"></script>
+        <script>
+            System.config({
+                'map': {
+                    'example': 'build/src/example.js'
+                }
+            });
+
+            System.import('example');
+        </script>
+    </body>
+</html>
