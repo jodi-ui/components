@@ -15,10 +15,6 @@ module.exports = function (config) {
 
         // list of files / patterns to load in the browser
         files: [
-            // sources and tests
-            'src/**/*.ts',
-            'spec/**/*.ts',
-
             // built sources and tests
             'build/**/*.js'
         ],
@@ -32,8 +28,13 @@ module.exports = function (config) {
             serveFiles: [
                 'node_modules/incremental-dom/dist/**/*.js',
                 'node_modules/incremental-dom/dist/**/*.map',
+                'node_modules/jodi-ui-dom/dist/dom.umd.js',
                 'node_modules/systemjs/dist/**/*.js',
-                'node_modules/systemjs/dist/**/*.map'
+                'node_modules/systemjs/dist/**/*.map',
+
+                'index.ts',
+                'src/**/*.ts',
+                'spec/**/*.ts'
             ],
 
             // SystemJS configuration specifically for tests, added after your config file.

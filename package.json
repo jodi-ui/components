@@ -4,7 +4,7 @@
   "description": "",
   "license": "MIT",
   "dependencies": {
-    "jodi-ui-dom": "^1.0.7"
+    "jodi-ui-dom": "^1.1.1"
   },
   "devDependencies": {
     "grunt": "^1.0.1",
