@@ -1,5 +1,6 @@
-import {el} from 'jodi-ui-dom';
+import {el, render} from 'jodi-ui-dom';
 import {LifeCycleCallback} from './interfaces';
+import {StateContainer} from './state-container';
 
 export class ComponentBuilder {
     private subscribers = {
@@ -50,26 +51,34 @@ export class ComponentBuilder {
         return this;
     }
 
-    public render(cb: Function): Element {
-        const element = el(this.tag, this.staticProps, this.dynamicProps, cb);
+    public render(cb: (state?: StateContainer) => void): Element {
+        return el(this.tag, this.staticProps, this.dynamicProps, (element) => {
 
-        if (element['__JodiUI-Component']) {
-            element['__JodiUI-Component'].updated = true;
-        } else {
-            element['__JodiUI-Component'] = {
-                updated: false
-            };
-        }
+            // figure out if we've got fresh component
+            // assign markers and state container if not
+            if (element['__JodiUI-Component']) {
+                element['__JodiUI-Component'].updated = true;
+            } else {
+                element['__JodiUI-Component'] = {
+                    updated: false,
+                    state: new StateContainer(() => {
+                        render(element.parentElement, () => {
+                            this.render(cb);
+                        });
+                    })
+                };
+            }
 
-        if (element['__JodiUI-Component'].updated) {
-            this.subscribers.updated(element);
-        } else {
-            this.subscribers.created(element);
-        }
+            cb(element['__JodiUI-Component'].state);
 
-        this.subscribers.rendered(element);
+            if (element['__JodiUI-Component'].updated) {
+                this.subscribers.updated(element, element['__JodiUI-Component'].state);
+            } else {
+                this.subscribers.created(element, element['__JodiUI-Component'].state);
+            }
 
-        return element;
+            this.subscribers.rendered(element, element['__JodiUI-Component'].state);
+        });
     }
 }
 
