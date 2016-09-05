@@ -17,4 +17,24 @@ describe('StateContainer', () => {
         expect(callbackWasCalled).toBeTruthy();
         expect(state.get('lorem')).toEqual('ipsum');
     });
+
+    it('should be marked as initial unless a value was set on it', () => {
+        const state = new StateContainer(() => {});
+        expect(state.isInitial()).toBeTruthy();
+
+        state.get('foo');
+        expect(state.isInitial()).toBeTruthy();
+
+        state.set('foo', 'bar');
+        expect(state.isInitial()).toBeFalsy();
+
+        state.set('foo', undefined);
+        expect(state.isInitial()).toBeFalsy();
+
+        state.set('foo', 'dolor');
+        expect(state.isInitial()).toBeFalsy();
+
+        state.set('lorem', 'ipsum');
+        expect(state.isInitial()).toBeFalsy();
+    });
 });
