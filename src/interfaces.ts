@@ -1,5 +1,5 @@
-import {StateContainer} from './state-container';
+import {State} from './state';
 
 export interface LifeCycleCallback {
-    (element: Element, state: StateContainer): void;
+    (element: Element, state: State): void;
 }
