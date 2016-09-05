@@ -2,6 +2,33 @@ import {el, render} from 'jodi-ui-dom';
 import {LifeCycleCallback} from './interfaces';
 import {StateContainer} from './state-container';
 
+const COMPONENT_PROPERTY = '__JodiUI-Component';
+
+function isComponentBeingUpdated(element: HTMLElement): boolean {
+    return element.hasOwnProperty(COMPONENT_PROPERTY);
+}
+
+function isComponentUpdated(element: HTMLElement): boolean {
+    return element[COMPONENT_PROPERTY].updated;
+}
+
+function createComponentMetadataWithStateContainer(element: HTMLElement, stateUpdatedCallback: Function): void {
+    element[COMPONENT_PROPERTY] = {
+        updated: false,
+        state: new StateContainer(stateUpdatedCallback)
+    };
+}
+
+function executeLifeCycleCallback(callback: LifeCycleCallback, element: HTMLElement) {
+    if (callback) {
+        callback(element, getState(element));
+    }
+}
+
+function getState(element: HTMLElement): StateContainer {
+    return element[COMPONENT_PROPERTY].state;
+}
+
 export class ComponentBuilder {
     private subscribers = {
         created: undefined,
@@ -12,9 +39,6 @@ export class ComponentBuilder {
     private dynamicProps: Object;
 
     constructor(private tag: string) {
-        this.subscribers.created = () => {};
-        this.subscribers.updated = () => {};
-        this.subscribers.rendered = () => {};
     }
 
     public withProps(staticProps: Object, dynamicProps: Object): ComponentBuilder {
@@ -53,31 +77,25 @@ export class ComponentBuilder {
 
     public render(cb: (state?: StateContainer) => void): Element {
         return el(this.tag, this.staticProps, this.dynamicProps, (element) => {
-
-            // figure out if we've got fresh component
-            // assign markers and state container if not
-            if (element['__JodiUI-Component']) {
-                element['__JodiUI-Component'].updated = true;
+            if (isComponentBeingUpdated(element)) {
+                element[COMPONENT_PROPERTY].updated = true;
             } else {
-                element['__JodiUI-Component'] = {
-                    updated: false,
-                    state: new StateContainer(() => {
-                        render(element.parentElement, () => {
-                            this.render(cb);
-                        });
-                    })
-                };
+                createComponentMetadataWithStateContainer(element, () => {
+                    render(element.parentElement, () => {
+                        this.render(cb);
+                    });
+                });
             }
 
-            cb(element['__JodiUI-Component'].state);
+            cb(getState(element));
 
-            if (element['__JodiUI-Component'].updated) {
-                this.subscribers.updated(element, element['__JodiUI-Component'].state);
+            if (isComponentUpdated(element)) {
+                executeLifeCycleCallback(this.subscribers.updated, element);
             } else {
-                this.subscribers.created(element, element['__JodiUI-Component'].state);
+                executeLifeCycleCallback(this.subscribers.created, element);
             }
 
-            this.subscribers.rendered(element, element['__JodiUI-Component'].state);
+            executeLifeCycleCallback(this.subscribers.rendered, element);
         });
     }
 }
