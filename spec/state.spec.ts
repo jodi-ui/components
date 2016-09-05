@@ -1,8 +1,8 @@
-import {StateContainer} from '../src/state-container';
+import {State} from '../src/state';
 
-describe('StateContainer', () => {
+describe('State', () => {
     it('should get you a default value of given key if such key does not exist in state', () => {
-        const state = new StateContainer(() => {});
+        const state = new State(() => {});
         expect(state.get('foo', 'bar')).toEqual('bar');
     });
 
@@ -11,7 +11,7 @@ describe('StateContainer', () => {
         const callback = () => {
             callbackWasCalled = true;
         };
-        const state = new StateContainer(callback);
+        const state = new State(callback);
 
         state.set('lorem', 'ipsum');
         expect(callbackWasCalled).toBeTruthy();
@@ -19,7 +19,7 @@ describe('StateContainer', () => {
     });
 
     it('should be marked as initial unless a value was set on it', () => {
-        const state = new StateContainer(() => {});
+        const state = new State(() => {});
         expect(state.isInitial()).toBeTruthy();
 
         state.get('foo');

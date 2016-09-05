@@ -1,6 +1,6 @@
 import {el, render} from 'jodi-ui-dom';
 import {LifeCycleCallback} from './interfaces';
-import {StateContainer} from './state-container';
+import {State} from './state';
 
 const COMPONENT_PROPERTY = '__JodiUI-Component';
 
@@ -12,10 +12,10 @@ function isComponentUpdated(element: HTMLElement): boolean {
     return element[COMPONENT_PROPERTY].updated;
 }
 
-function createComponentMetadataWithStateContainer(element: HTMLElement, stateUpdatedCallback: Function): void {
+function createComponentMetadataWithState(element: HTMLElement, stateUpdatedCallback: Function): void {
     element[COMPONENT_PROPERTY] = {
         updated: false,
-        state: new StateContainer(stateUpdatedCallback)
+        state: new State(stateUpdatedCallback)
     };
 }
 
@@ -25,7 +25,7 @@ function executeLifeCycleCallback(callback: LifeCycleCallback, element: HTMLElem
     }
 }
 
-function getState(element: HTMLElement): StateContainer {
+function getState(element: HTMLElement): State {
     return element[COMPONENT_PROPERTY].state;
 }
 
@@ -75,12 +75,12 @@ export class ComponentBuilder {
         return this;
     }
 
-    public render(cb: (state?: StateContainer) => void): Element {
+    public render(cb: (state?: State) => void): Element {
         return el(this.tag, this.staticProps, this.dynamicProps, (element) => {
             if (isComponentBeingUpdated(element)) {
                 element[COMPONENT_PROPERTY].updated = true;
             } else {
-                createComponentMetadataWithStateContainer(element, () => {
+                createComponentMetadataWithState(element, () => {
                     render(element.parentElement, () => {
                         this.render(cb);
                     });

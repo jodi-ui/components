@@ -1,7 +1,6 @@
-// TODO rename to State before releasing
-export class StateContainer {
+export class State {
     private updateCallback: Function;
-    private state = {};
+    private data = {};
     private initial: boolean = true;
 
     constructor(updateCallback: Function) {
@@ -9,16 +8,15 @@ export class StateContainer {
     }
 
     public get(name: string, defaultValue?: any): any {
-        if (this.state.hasOwnProperty(name)) {
-            return this.state[name];
+        if (this.data.hasOwnProperty(name)) {
+            return this.data[name];
         }
 
         return defaultValue;
     }
 
-    public set(name: string, value: any): StateContainer {
-        console.debug('setting', name, value);
-        this.state[name] = value;
+    public set(name: string, value: any): State {
+        this.data[name] = value;
         this.initial = false;
         this.updateCallback();
 

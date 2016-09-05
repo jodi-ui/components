@@ -1,13 +1,13 @@
 import {component} from '../src/builder';
 import {el, text, render} from 'jodi-ui-dom';
-import {StateContainer} from '../src/state-container';
+import {State} from '../src/state';
 
 describe('Component Builder', () => {
     it('should render a component which calls right callbacks in right circumstances while refreshing from outside', () => {
         const node = document.createElement('foo');
         const eventsCalled = [];
 
-        const onCreated = (events: string[], element, state: StateContainer) => {
+        const onCreated = (events: string[], element, state: State) => {
             events.push('created');
         };
 
@@ -51,7 +51,7 @@ describe('Component Builder', () => {
         const node = document.createElement('foo');
         const eventsCalled = [];
 
-        const onCreated = (events: string[], element, state: StateContainer) => {
+        const onCreated = (events: string[], element, state: State) => {
             events.push('created');
             state.set('count', 1); // this causes an updated
         };
@@ -60,7 +60,7 @@ describe('Component Builder', () => {
             events.push('updated');
         };
 
-        const onRendered = (events: string[], element: HTMLElement, state: StateContainer) => {
+        const onRendered = (events: string[], element: HTMLElement, state: State) => {
             events.push('rendered');
             expect(element.querySelector('div').innerHTML).toEqual(state.get('count').toString());
         };
@@ -70,7 +70,7 @@ describe('Component Builder', () => {
                 .whenCreated(onCreated.bind(this, eventsCalled))
                 .whenUpdated(onUpdated.bind(this, eventsCalled))
                 .whenRendered(onRendered.bind(this, eventsCalled))
-                .render((state: StateContainer) => {
+                .render((state: State) => {
                     const count = state.get('count', 0);
 
                     el('div', () => text(count));
