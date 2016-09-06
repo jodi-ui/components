@@ -87,7 +87,7 @@ describe('Component Builder', () => {
         expect(eventsCalled[3]).toEqual('rendered');
     });
 
-    it('should properly render component even if callbacks are not set', () => {
+    it('should properly render component even if lifecycle callbacks are not set', () => {
         const node = document.createElement('foo');
         let element;
 
@@ -100,4 +100,17 @@ describe('Component Builder', () => {
         expect(element).toBeDefined();
         expect(element.querySelector('span').innerHTML).toEqual('Test');
     });
+
+    it('should properly render component even if no children callback is set', () => {
+        const node = document.createElement('foo');
+        let element;
+
+        render(node, () => {
+            element = component('div').withProps({foo: 'bar'}).render();
+        });
+
+        expect(element).toBeDefined();
+        expect(element.getAttribute('foo')).toEqual('bar');
+    });
 });
+

@@ -41,7 +41,7 @@ export class ComponentBuilder {
     constructor(private tag: string) {
     }
 
-    public withProps(staticProps: Object, dynamicProps: Object): ComponentBuilder {
+    public withProps(staticProps: Object = {}, dynamicProps: Object = {}): ComponentBuilder {
         this.staticProps = staticProps;
         this.dynamicProps = dynamicProps;
 
@@ -75,7 +75,7 @@ export class ComponentBuilder {
         return this;
     }
 
-    public render(cb: (state?: State) => void): Element {
+    public render(cb?: (state?: State) => void): Element {
         return el(this.tag, this.staticProps, this.dynamicProps, (element) => {
             if (isComponentBeingUpdated(element)) {
                 element[COMPONENT_PROPERTY].updated = true;
@@ -87,7 +87,9 @@ export class ComponentBuilder {
                 });
             }
 
-            cb(getState(element));
+            if (cb) {
+                cb(getState(element));
+            }
 
             if (isComponentUpdated(element)) {
                 executeLifeCycleCallback(this.subscribers.updated, element);
