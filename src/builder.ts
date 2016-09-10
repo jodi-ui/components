@@ -12,10 +12,10 @@ function isComponentUpdated(element: HTMLElement): boolean {
     return element[COMPONENT_PROPERTY].updated;
 }
 
-function createComponentMetadataWithState(element: HTMLElement, stateUpdatedCallback: Function): void {
+function createComponentMetadataWithState(element: HTMLElement): void {
     element[COMPONENT_PROPERTY] = {
         updated: false,
-        state: new State(stateUpdatedCallback)
+        state: new State()
     };
 }
 
@@ -80,11 +80,7 @@ export class ComponentBuilder {
             if (isComponentBeingUpdated(element)) {
                 element[COMPONENT_PROPERTY].updated = true;
             } else {
-                createComponentMetadataWithState(element, () => {
-                    render(element.parentElement, () => {
-                        this.render(cb);
-                    });
-                });
+                createComponentMetadataWithState(element);
             }
 
             if (cb) {

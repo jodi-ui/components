@@ -1,11 +1,7 @@
+import {StateUpdatedCallback} from './interfaces';
 export class State {
-    private updateCallback: Function;
     private data = {};
     private initial: boolean = true;
-
-    constructor(updateCallback: Function) {
-        this.updateCallback = updateCallback;
-    }
 
     public get(name: string, defaultValue?: any): any {
         if (this.data.hasOwnProperty(name)) {
@@ -15,10 +11,15 @@ export class State {
         return defaultValue;
     }
 
-    public set(name: string, value: any): State {
+    public set(name: string, value: any, callback?: StateUpdatedCallback): State {
+        const oldVal = this.data[name];
+
         this.data[name] = value;
         this.initial = false;
-        this.updateCallback();
+
+        if (callback) {
+            callback(this, name, value, oldVal)
+        }
 
         return this;
     }

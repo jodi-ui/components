@@ -51,9 +51,16 @@ describe('Component Builder', () => {
         const node = document.createElement('foo');
         const eventsCalled = [];
 
-        const onCreated = (events: string[], element, state: State) => {
+        const onCreated = (events: string[], element, componentState: State) => {
             events.push('created');
-            state.set('count', 1); // this causes an updated
+            componentState.set('count', 1, (state, key, newVal, oldVal) => {
+                expect(state).toBe(componentState);
+                expect(key).toEqual('count');
+                expect(oldVal).toEqual(undefined);
+                expect(newVal).toEqual(1);
+
+                refreshUI();
+            });
         };
 
         const onUpdated = (events: string[], element) => {
@@ -65,17 +72,21 @@ describe('Component Builder', () => {
             expect(element.querySelector('div').innerHTML).toEqual(state.get('count').toString());
         };
 
-        render(node, () => {
-            component('section')
-                .whenCreated(onCreated.bind(this, eventsCalled))
-                .whenUpdated(onUpdated.bind(this, eventsCalled))
-                .whenRendered(onRendered.bind(this, eventsCalled))
-                .render((state: State) => {
-                    const count = state.get('count', 0);
+        const refreshUI = () => {
+            render(node, () => {
+                component('section')
+                    .whenCreated(onCreated.bind(this, eventsCalled))
+                    .whenUpdated(onUpdated.bind(this, eventsCalled))
+                    .whenRendered(onRendered.bind(this, eventsCalled))
+                    .render((state: State) => {
+                        const count = state.get('count', 0);
 
-                    el('div', () => text(count));
-                });
-        });
+                        el('div', () => text(count));
+                    });
+            });
+        };
+
+        refreshUI();
 
         expect(eventsCalled.length).toEqual(4);
         expect(eventsCalled[0]).toEqual('created');

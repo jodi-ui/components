@@ -1,4 +1,4 @@
-import {component} from '../../index';
+import {component, StateUpdatedCallback} from '../../index';
 import {el, text} from 'jodi-ui-dom';
 import {State} from '../state';
 
@@ -14,7 +14,7 @@ const onRendered = element => {
     console.log('component 2 rendered', element);
 };
 
-export const statefulCounterComponent = () => component('div')
+export const statefulCounterComponent = (refreshUI: StateUpdatedCallback) => component('div')
     .whenCreated(onCreated)
     .whenUpdated(onUpdated)
     .whenRendered(onRendered)
@@ -24,7 +24,7 @@ export const statefulCounterComponent = () => component('div')
             el('h2', () => text('Stateful counter'));
             el('div', () => text(number));
             el('button', {}, {
-                'onclick': () => state.set('number', number + 1)
+                'onclick': () => state.set('number', number + 1, refreshUI)
             }, () => text('Increment'));
         });
     });
