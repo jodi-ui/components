@@ -1,3 +1,2 @@
-export * from './src/builder';
-export * from './src/state';
+export {component} from './src/builder';
 export * from './src/interfaces';

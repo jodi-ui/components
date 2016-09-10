@@ -1,5 +1,6 @@
-import {StateUpdatedCallback} from './interfaces';
-export class State {
+import {StateUpdatedCallback, ComponentState} from './interfaces';
+
+export class State implements ComponentState {
     private data = {};
     private initial: boolean = true;
 
