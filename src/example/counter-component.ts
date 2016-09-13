@@ -1,5 +1,5 @@
 import {component} from '../../index';
-import {el, text} from 'jodi-ui-dom';
+import {el, text, s} from 'jodi-ui-dom';
 
 const onCreated = element => {
     console.log('component created', element);
@@ -18,12 +18,12 @@ export const counterComponent = (number, actions: CounterActionCreators) => comp
     .whenUpdated(onUpdated)
     .whenRendered(onRendered)
     .render(() => {
-        el('div', {'style': 'background: seagreen; padding: 1rem;'}, () => {
+        el('div', s({'style': 'background: seagreen; padding: 1rem;'}), () => {
             el('h2', () => text('Counter'));
             el('div', () => text(number));
-            el('button', {
+            el('button', s({
                 'onclick': actions.incrementCounter
-            }, () => text('Increment'));
+            }), () => text('Increment'));
         });
     });
 

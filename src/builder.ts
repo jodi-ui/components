@@ -1,4 +1,4 @@
-import {el, render} from 'jodi-ui-dom';
+import {el, s, d} from 'jodi-ui-dom';
 import {LifeCycleCallback} from './interfaces';
 import {State} from './state';
 
@@ -76,7 +76,7 @@ export class ComponentBuilder {
     }
 
     public render(cb?: (state?: State) => void): Element {
-        return el(this.tag, this.staticProps, this.dynamicProps, (element) => {
+        return el(this.tag, s(this.staticProps), d(this.dynamicProps), (element) => {
             if (isComponentBeingUpdated(element)) {
                 element[COMPONENT_PROPERTY].updated = true;
             } else {
