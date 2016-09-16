@@ -1,6 +1,22 @@
 import {component} from '../src/builder';
-import {el, text, render} from 'jodi-ui-dom';
+import {el, text, render, s, d, k} from 'jodi-ui-dom';
 import {State} from '../src/state';
+
+const getAttrsListedAsDynamic = (node: Element) => {
+    // IncrementalDOM stores dynamic attrs in node.__incrementalDOMData.newAttrs
+    // This function returns that list
+
+    const keys = [];
+    for (let key in node['__incrementalDOMData'].newAttrs) {
+        keys.push(key);
+    }
+
+    return keys;
+};
+
+const getKey = (node: Element) => {
+    return node['__incrementalDOMData'].key;
+}
 
 describe('Component Builder', () => {
     it('should render a component which calls right callbacks in right circumstances while refreshing from outside', () => {
@@ -122,6 +138,26 @@ describe('Component Builder', () => {
 
         expect(element).toBeDefined();
         expect(element.getAttribute('foo')).toEqual('bar');
+    });
+
+    it('should be able to render component\'s element with props and key using jodi-ui-dom\'s functions', () => {
+        const node = document.createElement('bar');
+        let element;
+
+        render(node, () => {
+            element = component('dolor', s({abc: 'def'}), k('foo'), d({lorem: 'ipsum'})).render();
+        });
+
+        expect(element).toBeDefined();
+
+        expect(element.getAttribute('abc')).toEqual('def');
+        expect(element.getAttribute('lorem')).toEqual('ipsum');
+
+        const dynamicProps = getAttrsListedAsDynamic(element);
+        expect(dynamicProps).toContain('lorem');
+        expect(dynamicProps).not.toContain('abc');
+
+        expect(getKey(element)).toEqual('foo');
     });
 });
 

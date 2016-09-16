@@ -1,4 +1,4 @@
-import {el, s, d} from 'jodi-ui-dom';
+import {el, DynamicProperties, StaticProperties, Key} from 'jodi-ui-dom';
 import {LifeCycleCallback} from './interfaces';
 import {State} from './state';
 
@@ -30,20 +30,34 @@ function getState(element: HTMLElement): State {
 }
 
 export class ComponentBuilder {
+    private key: Key;
     private subscribers = {
         created: undefined,
         updated: undefined,
         rendered: undefined
     };
-    private staticProps: Object;
-    private dynamicProps: Object;
+    private staticProps: StaticProperties;
+    private dynamicProps: DynamicProperties;
 
-    constructor(private tag: string) {
+    constructor(private tag, params: Array<any>) {
+        params.forEach(param => {
+            if (param instanceof DynamicProperties) {
+                this.dynamicProps = param;
+            }
+
+            if (param instanceof StaticProperties) {
+                this.staticProps = param;
+            }
+
+            if (param instanceof Key) {
+                this.key = param;
+            }
+        });
     }
 
     public withProps(staticProps: Object = {}, dynamicProps: Object = {}): ComponentBuilder {
-        this.staticProps = staticProps;
-        this.dynamicProps = dynamicProps;
+        this.staticProps = new StaticProperties(staticProps);
+        this.dynamicProps = new DynamicProperties(dynamicProps);
 
         return this;
     }
@@ -76,7 +90,7 @@ export class ComponentBuilder {
     }
 
     public render(cb?: (state?: State) => void): Element {
-        return el(this.tag, s(this.staticProps), d(this.dynamicProps), (element) => {
+        return el(this.tag, this.key, this.staticProps, this.dynamicProps, (element) => {
             if (isComponentBeingUpdated(element)) {
                 element[COMPONENT_PROPERTY].updated = true;
             } else {
@@ -98,6 +112,6 @@ export class ComponentBuilder {
     }
 }
 
-export function component(tag: string): ComponentBuilder {
-    return new ComponentBuilder(tag);
+export function component(tag, ...params): ComponentBuilder {
+    return new ComponentBuilder(tag, params);
 }
