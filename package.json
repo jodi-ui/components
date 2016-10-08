@@ -1,6 +1,6 @@
 {
   "name": "jodi-ui-components",
-  "version": "1.0.0-RC9",
+  "version": "1.0.0",
   "description": "",
   "license": "MIT",
   "main": "dist/components.umd.js",
