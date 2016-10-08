@@ -2,6 +2,12 @@
 
 JodiUI Components extend [JodiUI DOM](https://github.com/jodi-ui/dom) with state and lifecycle callbacks.
 
+## Installation
+
+```
+npm install --save jodi-ui-components
+```
+
 ## Usage example
 Simplest component would look like that:
 

@@ -1,11 +1,11 @@
 {
   "name": "jodi-ui-components",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "license": "MIT",
   "main": "dist/components.umd.js",
   "dependencies": {
-    "jodi-ui-dom": "2.0.0-RC4"
+    "jodi-ui-dom": "2.0.0"
   },
   "devDependencies": {
     "grunt": "^1.0.1",
